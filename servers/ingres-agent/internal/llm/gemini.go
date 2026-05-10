@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
@@ -35,7 +36,7 @@ func (p *GeminiProvider) HandleUserQuery(ctx context.Context, userQuery string, 
 
 	resp, err := p.callGeminiAPI(userQuery, previousChats)
 	if err != nil {
-		fmt.Printf("gemini error: %v\n", err)
+		slog.Error("gemini api call failed", "error", err, "query", userQuery)
 		return fmt.Sprintf("Agent response to: %s", userQuery), false, nil
 	}
 
@@ -123,11 +124,10 @@ func (p *GeminiProvider) callGeminiAPI(userQuery string, previousChats []apitype
 
 		if part.FunctionCall != nil && part.FunctionCall.Name == "research" {
 			if queryMatchesPrevious {
-				fmt.Println("🟡 Skipping redundant research (duplicate query detected)")
+				slog.Warn("Skipping redundant research (duplicate query detected)", "query", userQuery)
 			} else {
-				fmt.Printf("🔍 Gemini requested research with args: %v\n", part.FunctionCall.Args)
-
 				loc, _ := part.FunctionCall.Args["location"].(string)
+				slog.Info("Gemini requested research", "location", loc)
 				state := utils.IsIndianState(loc)
 
 				// Delegate the massive data fetching logic to orchestrator.go

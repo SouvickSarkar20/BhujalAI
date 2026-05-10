@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/ingres/ingres-agent-go/internal/llm"
@@ -37,8 +37,7 @@ func HandleAgentChat(c *fiber.Ctx) error {
 	p := llm.GetProvider()
 	answer, state, err := p.HandleUserQuery(ctx, req.Question, chatHistory)
 	if err != nil {
-
-		fmt.Printf("error from llm: %v\n", err)
+		slog.Error("error from llm", "error", err, "question", req.Question)
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "agent processing failed", "details": err.Error()})
 	}
 

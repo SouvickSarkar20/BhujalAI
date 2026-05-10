@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,10 +19,16 @@ import (
 )
 
 func main() {
+	// Initialize structured logger
+	loggerOpts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}
+	baseLogger := slog.New(slog.NewJSONHandler(os.Stdout, loggerOpts))
+	slog.SetDefault(baseLogger)
 
 	_ = godotenv.Load(".env")
 	if err := godotenv.Load("../../.env"); err != nil {
-		log.Println("Note: root .env not found, using local or system env")
+		slog.Warn("Note: root .env not found, using local or system env")
 	}
 
 	cfg := config.LoadConfig()
@@ -31,7 +38,8 @@ func main() {
 
 	dbConn := db.Connect(cfg)
 	if err := dbConn.AutoMigrate(&models.User{}, &models.Chat{}, &models.Message{}); err != nil {
-		log.Fatalf("failed migration: %v", err)
+		slog.Error("failed migration", "error", err)
+		os.Exit(1)
 	}
 
 	app := fiber.New(fiber.Config{AppName: "Ingres HTTP Backend"})
@@ -47,8 +55,9 @@ func main() {
 	router.SetupRoutes(app, dbConn, cfg)
 
 	port := strconv.Itoa(cfg.HTTPBackendPort)
-	log.Printf("http-backend listening on %s", port)
+	slog.Info("http-backend starting", "port", port, "app", "BhujalAI")
 	if err := app.Listen(":" + port); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+		slog.Error("failed to start server", "error", err)
+		os.Exit(1)
 	}
 }

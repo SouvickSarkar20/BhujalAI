@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -64,7 +65,7 @@ func FetchMapBusinessData(input FetchMapBusinessDataInput) (interface{}, error) 
 		"stateUUID":          stateUUIDs,
 	}
 
-	fmt.Printf("📡 Fetching MAP data for %s (%s)...\n", input.Location, yearString)
+	slog.Info("Fetching MAP data", "location", input.Location, "year", yearString)
 
 	payloadBytes, _ := json.Marshal(payload)
 	resp, err := http.Post("https://ingres.iith.ac.in/api/gec/mapBusinessData", "application/json", bytes.NewReader(payloadBytes))

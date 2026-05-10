@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -14,10 +15,17 @@ import (
 )
 
 func main() {
+	// Initialize structured logger
+	loggerOpts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}
+	baseLogger := slog.New(slog.NewJSONHandler(os.Stdout, loggerOpts))
+	slog.SetDefault(baseLogger)
+
 	// Try loading local .env first, then fallback to root .env
 	_ = godotenv.Load(".env")
 	if err := godotenv.Load("../../.env"); err != nil {
-		log.Println("Note: root .env not found, using local or system env")
+		slog.Warn("Note: root .env not found, using local or system env")
 	}
 
 
@@ -36,8 +44,10 @@ func main() {
 	})
 
 	log.Printf("ingres-agent service listening on %d", port)
+	slog.Info("ingres-agent starting", "port", port)
 	if err := app.Listen(":" + strconv.Itoa(port)); err != nil {
-		log.Fatalf("failed to start agent server: %v", err)
+		slog.Error("failed to start agent server", "error", err)
+		os.Exit(1)
 	}
 }
 

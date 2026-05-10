@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -53,7 +54,7 @@ func FetchGetBusinessData(input FetchGetBusinessDataInput) (interface{}, error) 
 		"stateuuid":          nil,
 	}
 
-	fmt.Printf("📡 Fetching %s data for %s (%s)...\n", strings.ToUpper(viewType), input.Location, yearString)
+	slog.Info("Fetching business data", "location", input.Location, "year", yearString, "view", viewType)
 
 	payloadBytes, _ := json.Marshal(payload)
 	resp, err := http.Post("https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen", "application/json", bytes.NewReader(payloadBytes))
@@ -79,7 +80,7 @@ func FetchGetBusinessData(input FetchGetBusinessDataInput) (interface{}, error) 
 		}
 	}
 
-	fmt.Printf("⚠️ No matching location found for \"%s\"\n", input.Location)
+	slog.Warn("No matching location found in business data", "location", input.Location)
 	return map[string]interface{}{
 		"message": fmt.Sprintf("No data found for %s", input.Location),
 		"data":    nil,

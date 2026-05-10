@@ -34,6 +34,15 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config) {
 	analytics := api.Group("/analytics")
 	analytics.Get("/locations", handler.GetLocations)
 
+	// Health check
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.Status(200).JSON(fiber.Map{
+			"status":  "ok",
+			"service": "http-backend",
+			"app":     "BhujalAI",
+		})
+	})
+
 	// Protected routes
 	protected := analytics.Group("/")
 	protected.Use(middleware.RequireAuth(cfg))

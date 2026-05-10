@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -62,7 +63,7 @@ func (p *GroqProvider) HandleUserQuery(ctx context.Context, userQuery string, pr
 
 func (p *GroqProvider) callWithTools(ctx context.Context, userQuery string, messages []GroqMessage) (string, bool, error) {
 	fullURL := p.baseURL + "/chat/completions"
-	
+
 	for i := 0; i < 5; i++ { // Max 5 iterations for tool calls
 		reqBody := GroqRequest{
 			Model:    p.model,
@@ -80,21 +81,20 @@ func (p *GroqProvider) callWithTools(ctx context.Context, userQuery string, mess
 		if err != nil {
 			return "", false, err
 		}
-		
+
 		respBody, _ := io.ReadAll(resp.Body)
 		resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			fmt.Printf("Groq API error (status %d): %s\n", resp.StatusCode, string(respBody))
+			slog.Error("Groq API error", "status", resp.StatusCode, "body", string(respBody))
 			return "", false, fmt.Errorf("groq api error: %s", string(respBody))
 		}
 
 		var gResp GroqResponse
 		if err := json.Unmarshal(respBody, &gResp); err != nil {
-			fmt.Printf("Groq parse error: %v\nResponse: %s\n", err, string(respBody))
+			slog.Error("Groq parse error", "error", err, "body", string(respBody))
 			return "", false, fmt.Errorf("failed to parse groq response: %s", string(respBody))
 		}
-
 
 		if len(gResp.Choices) == 0 {
 			return "", false, fmt.Errorf("no choice returned from groq")
@@ -110,9 +110,8 @@ func (p *GroqProvider) callWithTools(ctx context.Context, userQuery string, mess
 					var args map[string]interface{}
 					json.Unmarshal([]byte(tc.Function.Arguments), &args)
 					loc, _ := args["location"].(string)
+					slog.Info("Groq requested research", "location", loc)
 					state := utils.IsIndianState(loc)
-
-					fmt.Printf("🔍 Groq requested research with args: %v\n", tc.Function.Arguments)
 					researchResult, err := ExecuteResearchFlow(ctx, p, userQuery, loc, state)
 					if err != nil {
 						resultStr = fmt.Sprintf("Error: %v", err)
