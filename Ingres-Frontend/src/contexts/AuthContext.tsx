@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/config";
 
 interface User {
   id: string;
@@ -36,19 +36,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for existing token on mount
+    // Check for existing user in localStorage on mount
+    const savedUser = localStorage.getItem("auth_user");
     const token = localStorage.getItem("auth_token");
-    if (token) {
-      // In a real app, verify token with backend
-      // For now, simulate user from token
-      const mockUser = {
-        id: "1",
-        name: "Abhishek Kumar",
-        email: "abhishek@ingres.ai",
-        avatar:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-      };
-      setUser(mockUser);
+    
+    if (token && savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem("auth_user");
+        localStorage.removeItem("auth_token");
+      }
     }
     setIsLoading(false);
   }, []);
@@ -56,31 +54,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Mock API call - replace with real backend call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(`${BASE_URL}/auth/signin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-      const mockResponse = {
-        token: "mock-jwt-token",
-        user: {
-          id: "1",
-          name: "Abhishek Kumar",
-          email: email,
-          avatar:
-            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-        },
-      };
+      const data = await response.json();
 
-      localStorage.setItem("auth_token", mockResponse.token);
-      setUser(mockResponse.user);
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("auth_user", JSON.stringify(data.user));
+      setUser(data.user);
 
       toast({
         title: "Welcome back!",
         description: "You've been successfully logged in.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
       throw error;
@@ -92,31 +89,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Mock API call - replace with real backend call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(`${BASE_URL}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-      const mockResponse = {
-        token: "mock-jwt-token",
-        user: {
-          id: "1",
-          name: name,
-          email: email,
-          avatar:
-            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-        },
-      };
+      const data = await response.json();
 
-      localStorage.setItem("auth_token", mockResponse.token);
-      setUser(mockResponse.user);
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("auth_user", JSON.stringify(data.user));
+      setUser(data.user);
 
       toast({
         title: "Account created!",
-        description: "Welcome to INGRES AI. Let's get started!",
+        description: "Welcome to BHUJAL AI. Let's get started!",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Signup failed",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
       throw error;
@@ -127,8 +123,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
     setUser(null);
-    window.location.href = "/"; // ✅ forces navigation safely
+    window.location.href = "/";
     toast({
       title: "Logged out",
       description: "You've been successfully logged out.",

@@ -25,6 +25,8 @@ import (
 	"github.com/ingres/http-backend-go/internal/router"
 )
 
+const DefaultAgentURL = "http://localhost:9000"
+
 func main() {
 	// Initialize structured logger
 	loggerOpts := &slog.HandlerOptions{
@@ -104,7 +106,7 @@ func main() {
 	router.SetupRoutes(app, dbConn, cfg, cacheStore)
 
 	port := strconv.Itoa(cfg.HTTPBackendPort)
-	
+
 	// Prepare for graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)

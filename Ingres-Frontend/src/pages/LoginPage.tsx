@@ -3,10 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Droplets } from "lucide-react";
-import { BASE_URL } from "@/config";
+import { useAuth } from "@/contexts/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login, signup } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,38 +15,20 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleAuth = async () => {
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const endpoint = isSignUp
-        ? `${BASE_URL}/auth/signup`
-        : `${BASE_URL}/auth/signin`;
-
-      const payload = isSignUp
-        ? { name, email, password }
-        : { email, password };
-
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Authentication failed");
+      if (isSignUp) {
+        await signup(name, email, password);
+      } else {
+        await login(email, password);
       }
-
-
-      // Optionally store token if backend returns one
-      if (data.token) localStorage.setItem("token", data.token);
-
-      navigate("/dashboard/chat");
+      navigate("/dashboard");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -79,10 +62,10 @@ const LoginPage = () => {
       <div className="relative z-10 w-full max-w-md px-6">
         {/* Header */}
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-white mb-4">SWAGATAM 🙏🏼</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">BHUJAL AI 🙏🏼</h2>
           <p className="text-lg text-white/80 leading-relaxed">
-            Dive into India’s groundwater insights with Hydro AI Talk.
-            Sign in to explore, analyze, and forecast data effortlessly.
+            Revolutionizing groundwater intelligence in India.
+            Sign in to explore and analyze critical data.
           </p>
         </div>
 
@@ -94,20 +77,23 @@ const LoginPage = () => {
           className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8"
         >
           <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-            {isSignUp ? "Create Account" : "Let's Get you Logged in"}
+            {isSignUp ? "Create Account" : "Welcome Back"}
           </h1>
 
           {/* Error */}
           {error && (
-            <p className="text-red-500 text-center text-sm mb-3">{error}</p>
+            <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+              {error}
+            </div>
           )}
 
           {/* Form */}
-          <div className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-4">
             {isSignUp && (
               <input
                 type="text"
                 placeholder="Full Name"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-400 outline-none"
@@ -116,6 +102,7 @@ const LoginPage = () => {
             <input
               type="email"
               placeholder="Email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-400 outline-none"
@@ -123,28 +110,30 @@ const LoginPage = () => {
             <input
               type="password"
               placeholder="Password"
+              required
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-400 outline-none"
             />
-          </div>
 
-          {/* Primary button */}
-          <button
-            onClick={handleAuth}
-            disabled={loading}
-            className="w-full mt-6 py-3 rounded-xl bg-teal-500 text-white font-semibold shadow-md hover:bg-teal-600 transition disabled:opacity-60"
-          >
-            {loading
-              ? "Please wait..."
-              : isSignUp
-              ? "Sign Up"
-              : "Login"}
-          </button>
+            {/* Primary button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-6 py-3 rounded-xl bg-teal-500 text-white font-semibold shadow-md hover:bg-teal-600 transition disabled:opacity-60"
+            >
+              {loading
+                ? "Authenticating..."
+                : isSignUp
+                ? "Sign Up"
+                : "Login"}
+            </button>
+          </form>
 
           {/* Toggle link */}
           <p className="mt-6 text-center text-gray-600 text-sm">
-            {isSignUp ? "Already have an account?" : "Don’t have an account?"}{" "}
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <button
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-teal-600 font-semibold hover:underline"

@@ -16,6 +16,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/ingres/ingres-agent-go/internal/apierr"
+	"github.com/ingres/ingres-agent-go/internal/cache"
 	"github.com/ingres/ingres-agent-go/internal/handler"
 )
 
@@ -39,6 +40,23 @@ func main() {
 		port = p
 	}
 
+	// Initialize Cache
+	l1 := cache.NewLocalStore(5 * time.Minute)
+	var cacheStore cache.Store = l1
+
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL != "" {
+		l2, err := cache.NewRedisStore(redisURL)
+		if err != nil {
+			slog.Warn("Failed to connect to Redis (L2 cache)", "error", err)
+		} else {
+			slog.Info("Connected to Redis (L2 cache)")
+			cacheStore = cache.NewHybridCache(l1, l2)
+		}
+	} else {
+		slog.Warn("REDIS_URL not set, using only L1 cache")
+	}
+
 	app := fiber.New(fiber.Config{
 		AppName: "Ingres Agent Service",
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
@@ -58,7 +76,7 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	app.Post("/agent/chat", handler.HandleAgentChat)
+	app.Post("/agent/chat", handler.HandleAgentChat(cacheStore))
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})

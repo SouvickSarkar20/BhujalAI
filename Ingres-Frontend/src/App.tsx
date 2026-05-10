@@ -14,6 +14,7 @@ import SettingsPage from "./pages/SettingsPage";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -28,15 +29,17 @@ const App = () => (
             {/* Public Landing Page */}
             <Route path="/" element={<Index />} />
              <Route path="login" element={<LoginPage />} />
-            {/* Dashboard & Nested Routes (unprotected for now) */}
-            <Route path="/dashboard" element={<DashboardLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="chat" element={<ChatPage />} />
-              <Route path="spaces" element={<SpacesPage />} />
-               <Route path="chat/:chatId" element={<ChatPage />} />
-              <Route path="analysis" element={<AnalysisPage />} />
-              <Route path="forecasting" element={<ForecastingPage />} />
-              <Route path="settings" element={<SettingsPage />} />
+            {/* Dashboard & Nested Routes (PROTECTED) */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="chat" element={<ChatPage />} />
+                <Route path="spaces" element={<SpacesPage />} />
+                <Route path="chat/:chatId" element={<ChatPage />} />
+                <Route path="analysis" element={<AnalysisPage />} />
+                <Route path="forecasting" element={<ForecastingPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+              </Route>
             </Route>
 
             {/* Catch-all */}
