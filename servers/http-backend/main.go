@@ -16,6 +16,7 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/ingres/http-backend-go/internal/cache"
 	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/db"
 	"github.com/ingres/http-backend-go/internal/models"
@@ -56,7 +57,23 @@ func main() {
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
-	router.SetupRoutes(app, dbConn, cfg)
+	// Initialize Cache (L1: Local, L2: Redis)
+	l1 := cache.NewLocalStore(1 * time.Minute)
+	var cacheStore cache.Store = l1 // Default to L1 only if Redis fails
+
+	if cfg.RedisURL != "" {
+		l2, err := cache.NewRedisStore(cfg.RedisURL)
+		if err != nil {
+			slog.Error("failed to connect to redis, falling back to local only", "error", err)
+		} else {
+			slog.Info("connected to redis (L2 cache)")
+			cacheStore = cache.NewHybridCache(l1, l2)
+		}
+	} else {
+		slog.Warn("REDIS_URL not set, using local cache only")
+	}
+
+	router.SetupRoutes(app, dbConn, cfg, cacheStore)
 
 	port := strconv.Itoa(cfg.HTTPBackendPort)
 	

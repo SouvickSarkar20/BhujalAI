@@ -4,12 +4,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 
+	"github.com/ingres/http-backend-go/internal/cache"
 	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/handler"
 	"github.com/ingres/http-backend-go/internal/middleware"
 )
 
-func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config) {
+func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config, cacheStore cache.Store) {
 	api := app.Group("/api")
 
 	// Auth routes
@@ -32,7 +33,7 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config) {
 
 	// Analytics routes
 	analytics := api.Group("/analytics")
-	analytics.Get("/locations", handler.GetLocations)
+	analytics.Get("/locations", handler.GetLocations(cacheStore))
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
@@ -46,5 +47,5 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config) {
 	// Protected routes
 	protected := analytics.Group("/")
 	protected.Use(middleware.RequireAuth(cfg))
-	protected.Post("/analyze", handler.GetAnalyticsForLocation(cfg))
+	protected.Post("/query", handler.GetAnalyticsForLocation(cfg, cacheStore))
 }
