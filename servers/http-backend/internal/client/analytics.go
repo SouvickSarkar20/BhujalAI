@@ -9,7 +9,7 @@ import (
 )
 
 type AnalyticsRequest struct {
-	Location string `json:"location"`
+	Location string `json:"location" validate:"required"`
 	Year     string `json:"year,omitempty"`
 	View     string `json:"view,omitempty"`
 	LocUUID  string `json:"locuuid,omitempty"`

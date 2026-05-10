@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/ingres/ingres-agent-go/internal/llm"
 	"github.com/ingres/ingres-agent-go/internal/types"
+	"github.com/ingres/ingres-agent-go/internal/validator"
 )
 
 func HandleAgentChat(c *fiber.Ctx) error {
@@ -15,8 +16,11 @@ func HandleAgentChat(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
 	}
 
-	if req.Question == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "question missing"})
+	// Validation step
+	if err := validator.Validate.Struct(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": validator.FormatValidationError(err),
+		})
 	}
 
 	// Convert agent message history to chat format for LLM

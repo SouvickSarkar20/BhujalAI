@@ -8,7 +8,7 @@ type AgentMessage struct {
 type AgentRequest struct {
 	UserID        string         `json:"userId"`
 	ChatID        string         `json:"chatId"`
-	Question      string         `json:"question"`
+	Question      string         `json:"question" validate:"required,min=3,max=500"`
 	Messages      []AgentMessage `json:"messages"`
 	PreviousChats []ChatMessage  `json:"previousChats,omitempty"`
 }

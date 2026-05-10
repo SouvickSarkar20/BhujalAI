@@ -10,29 +10,24 @@ import (
 
 	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/models"
+	"github.com/ingres/http-backend-go/internal/validator"
 )
 
 
-type signupRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type signinRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+// Removed local request types, using models package instead
 
 func Signup(db *gorm.DB, cfg config.Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req signupRequest
+		var req models.SignupRequest
 		if err := c.BodyParser(&req); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
 		}
 
-		if req.Name == "" || req.Email == "" || req.Password == "" {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "missing fields"})
+		// Validation step
+		if err := validator.Validate.Struct(req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": validator.FormatValidationError(err),
+			})
 		}
 
 		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -51,9 +46,16 @@ func Signup(db *gorm.DB, cfg config.Config) fiber.Handler {
  
 func Signin(db *gorm.DB, cfg config.Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var req signinRequest
+		var req models.SigninRequest
 		if err := c.BodyParser(&req); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		}
+
+		// Validation step
+		if err := validator.Validate.Struct(req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": validator.FormatValidationError(err),
+			})
 		}
  
 		var user models.User

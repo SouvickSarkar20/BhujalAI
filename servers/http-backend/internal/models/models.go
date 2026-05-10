@@ -11,6 +11,17 @@ const (
 	SenderBot  Sender = "BOT"
 )
 
+type SignupRequest struct {
+	Name     string `json:"name" validate:"required,min=2,max=100"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=72"`
+}
+
+type SigninRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
 type User struct {
 	ID        string    `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
 	Name      string    `gorm:"not null" json:"name"`

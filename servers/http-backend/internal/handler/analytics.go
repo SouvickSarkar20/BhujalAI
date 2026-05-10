@@ -9,6 +9,7 @@ import (
 	"github.com/ingres/http-backend-go/internal/cache"
 	"github.com/ingres/http-backend-go/internal/client"
 	"github.com/ingres/http-backend-go/internal/config"
+	"github.com/ingres/http-backend-go/internal/validator"
 )
 
 func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Handler {
@@ -18,8 +19,11 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
 		}
 		
-		if req.Location == "" {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "location is required"})
+		// Validation step
+		if err := validator.Validate.Struct(req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": validator.FormatValidationError(err),
+			})
 		}
 
 		// Check Cache First
