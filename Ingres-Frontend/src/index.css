@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* INGRES AI Design System - Groundwater Intelligence */
+
+@layer base {
+  :root {
+    /* Core Brand Colors - Deep Sea Theme */
+    --deep-sea: 209 89% 35%;          /* #0B5FA5 */
+    --teal-accent: 175 72% 40%;       /* #17B2A0 */
+    --sand-warm: 44 73% 91%;          /* #F4EAD5 */
+    --navy-dark: 217 49% 10%;         /* #0F1724 */
+    
+    /* Extended Palette */
+    --ocean-light: 209 89% 85%;       /* Light deep-sea */
+    --teal-light: 175 72% 85%;        /* Light teal */
+    --sand-light: 44 73% 96%;         /* Lighter sand */
+    --navy-medium: 217 49% 25%;       /* Medium navy */
+    
+    /* Semantic Colors */
+    --background: 44 73% 96%;         /* Sand light */
+    --foreground: 217 49% 10%;        /* Navy dark */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 217 49% 10%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 49% 10%;
+    
+    --primary: 209 89% 35%;           /* Deep sea */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 175 72% 40%;         /* Teal accent */
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 44 73% 91%;             /* Sand warm */
+    --muted-foreground: 217 49% 25%;
+    
+    --accent: 175 72% 85%;           /* Teal light */
+    --accent-foreground: 217 49% 10%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 44 73% 85%;
+    --input: 0 0% 100%;
+    --ring: 209 89% 35%;
+    
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(var(--deep-sea)), hsl(var(--teal-accent)));
+    --gradient-sand: linear-gradient(135deg, hsl(var(--sand-warm)), hsl(var(--sand-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--deep-sea)) 0%, hsl(var(--teal-accent)) 50%, hsl(var(--ocean-light)) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 24px hsl(var(--deep-sea) / 0.08);
+    --shadow-ocean: 0 8px 40px hsl(var(--deep-sea) / 0.12);
+    --shadow-teal: 0 4px 20px hsl(var(--teal-accent) / 0.15);
+    
+    /* Animation */
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    --background: 217 49% 10%;        /* Navy dark */
+    --foreground: 44 73% 96%;         /* Sand light */
+    
+    --card: 217 49% 15%;
+    --card-foreground: 44 73% 96%;
+    
+    --popover: 217 49% 15%;
+    --popover-foreground: 44 73% 96%;
+    
+    --primary: 175 72% 40%;           /* Teal accent */
+    --primary-foreground: 217 49% 10%;
+    
+    --secondary: 209 89% 35%;         /* Deep sea */
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 217 49% 15%;
+    --muted-foreground: 44 73% 75%;
+    
+    --accent: 175 72% 25%;
+    --accent-foreground: 44 73% 96%;
+    
+    --border: 217 49% 20%;
+    --input: 217 49% 15%;
+    --ring: 175 72% 40%;
+    
+    /* Dark mode gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(var(--navy-dark)), hsl(var(--deep-sea)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--navy-dark)) 0%, hsl(var(--deep-sea)) 50%, hsl(var(--teal-accent)) 100%);
+    
+    /* Dark shadows */
+    --shadow-soft: 0 4px 24px hsl(0 0% 0% / 0.3);
+    --shadow-ocean: 0 8px 40px hsl(0 0% 0% / 0.4);
+    --shadow-teal: 0 4px 20px hsl(var(--teal-accent) / 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Hero Animation Background */
+  .hero-gradient {
+    background: var(--gradient-hero);
+    background-size: 400% 400%;
+    animation: gradient-flow 8s ease-in-out infinite;
+  }
+  
+  @keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Floating Animation */
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  /* Ripple Effect */
+  .ripple-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ripple-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, hsl(var(--teal-accent) / 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple 4s ease-out infinite;
+  }
+  
+  @keyframes ripple {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+  
+  /* Hover Lift Effect */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-ocean);
+  }
+  
+  /* Sparkline Animation */
+  .sparkline-path {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-line 2s ease-out forwards;
+  }
+  
+  @keyframes draw-line {
+    to { stroke-dashoffset: 0; }
+  }
+}

@@ -1,0 +1,575 @@
+{
+  "locationName": "MADHYA PRADESH",
+  "area": {
+    "non_recharge_worthy": {
+      "commandArea": 0.0,
+      "nonCommandArea": 0.0,
+      "poorQualityArea": 0.0,
+      "hillyArea": 0.0,
+      "forestArea": 0.0,
+      "totalArea": 3890461.0,
+      "pavedArea": 0.0,
+      "unpavedArea": 0.0
+    },
+    "total": {
+      "commandArea": 2957011.0,
+      "nonCommandArea": 23976316.0,
+      "poorQualityArea": 0.0,
+      "hillyArea": 0.0,
+      "forestArea": 0.0,
+      "totalArea": 30823788.0,
+      "pavedArea": 0.0,
+      "unpavedArea": 0.0
+    },
+    "recharge_worthy": {
+      "commandArea": 2957011.0,
+      "nonCommandArea": 23976316.0,
+      "poorQualityArea": 0.0,
+      "hillyArea": 0.0,
+      "forestArea": 0.0,
+      "totalArea": 26933327.0,
+      "pavedArea": 0.0,
+      "unpavedArea": 0.0
+    }
+  },
+  "loss": {
+    "poor_quality": 0.0,
+    "total": 190974.98,
+    "transpiration": 0.0,
+    "non_command": 148979.71000000002,
+    "evaporation": 0.0,
+    "command": 41995.310000000005,
+    "et": 0.0
+  },
+  "category": null,
+  "reportSummary": {
+    "0e4a6206-ce38-4eb8-ae01-4df08e80e5f0": {
+      "BLOCK": {
+        "semi_critical": 4,
+        "safe": 4
+      }
+    },
+    "e4b41149-81aa-4e9e-938f-d1b6cca4167f": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 2
+      }
+    },
+    "4343b911-a1c5-4614-a352-b7b4c16b5a91": {
+      "BLOCK": {
+        "over_exploited": 1,
+        "semi_critical": 1,
+        "safe": 5
+      }
+    },
+    "d055cd96-98c0-4683-86d2-209a2799c118": {
+      "BLOCK": {
+        "over_exploited": 3,
+        "semi_critical": 3
+      }
+    },
+    "1ebd9022-db03-4825-8916-a51a4bc08524": {
+      "BLOCK": {
+        "over_exploited": 1,
+        "semi_critical": 4,
+        "critical": 1
+      }
+    },
+    "124cae0f-6e66-4cb8-ba02-b9ef99d7e6a7": {
+      "BLOCK": {
+        "over_exploited": 2,
+        "semi_critical": 1
+      }
+    },
+    "9b697d41-35cc-4004-9081-41551082b174": {
+      "BLOCK": {
+        "over_exploited": 3,
+        "critical": 1,
+        "safe": 9
+      }
+    },
+    "b07ab66b-11e8-4d12-8521-a32104ceb195": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 4
+      }
+    },
+    "da387a13-be8a-4810-bddf-688f3c49dc7f": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 1
+      }
+    },
+    "4cc8dbe8-a631-4217-8fed-a20472a4223d": {
+      "BLOCK": {
+        "over_exploited": 2,
+        "semi_critical": 1,
+        "safe": 3
+      }
+    },
+    "9a492c55-0aea-4003-8072-0bef413cb13a": {
+      "BLOCK": {
+        "semi_critical": 5,
+        "safe": 3
+      }
+    },
+    "76c5f378-adb1-4e77-924e-7fb5123b7ebe": {
+      "BLOCK": {
+        "safe": 5
+      }
+    },
+    "e81028d6-8a1e-4bc4-b18e-1d2d8c0ec146": {
+      "BLOCK": {
+        "safe": 6
+      }
+    },
+    "d1124d4b-0137-4608-a899-8140c69030cf": {
+      "BLOCK": {
+        "safe": 3
+      }
+    },
+    "acb01c41-5469-4a61-a4ca-a7c9991f8564": {
+      "BLOCK": {
+        "safe": 7
+      }
+    },
+    "1a9d3a80-c6b7-4b30-9bfb-daa80ceb31cc": {
+      "BLOCK": {
+        "safe": 6
+      }
+    },
+    "26815a83-db6f-4921-9f99-9565c7a4e095": {
+      "BLOCK": {
+        "semi_critical": 4
+      }
+    },
+    "7a6d10fc-ed5f-4196-8335-43e294126df6": {
+      "BLOCK": {
+        "safe": 10
+      }
+    },
+    "9ba3473e-dd30-43ae-bd73-060526b2bdbb": {
+      "BLOCK": {
+        "semi_critical": 2,
+        "safe": 2
+      }
+    },
+    "b4c6a47a-7375-4400-b597-f85c8e79eb14": {
+      "BLOCK": {
+        "safe": 5
+      }
+    },
+    "c99c8fb1-412c-416c-90fe-e3d2e4388c87": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 5
+      }
+    },
+    "9ddd30fa-9da0-480a-8346-5cc448195aec": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 5
+      }
+    },
+    "302c8328-4093-4001-986d-8db9259c8794": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 6
+      }
+    },
+    "243fdd1a-1027-4932-a122-2c0f7f1d1a14": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 7
+      }
+    },
+    "c0fbf2ad-416b-4a60-a6e2-5d128b351d24": {
+      "BLOCK": {
+        "over_exploited": 3,
+        "semi_critical": 1,
+        "critical": 1
+      }
+    },
+    "be237eff-7a32-4495-9678-563b74f9ee79": {
+      "BLOCK": {
+        "safe": 2
+      }
+    },
+    "ddc395fc-3d5c-4134-9a9f-52545aef5e85": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 8
+      }
+    },
+    "16f7d73a-867b-4b1e-a3ae-461291f1764c": {
+      "BLOCK": {
+        "safe": 7
+      }
+    },
+    "2a6a57f5-32d8-4387-b90d-219f5ddd9381": {
+      "BLOCK": {
+        "safe": 3
+      }
+    },
+    "9c335502-f1d6-4688-bc73-258480bdb99e": {
+      "BLOCK": {
+        "over_exploited": 4,
+        "semi_critical": 2
+      }
+    },
+    "2a69268c-9dde-410a-bb8b-ee15e7175766": {
+      "BLOCK": {
+        "semi_critical": 2,
+        "safe": 5
+      }
+    },
+    "311446b2-de8c-4bf3-b663-cb4579ed7f24": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 6
+      }
+    },
+    "f02764ea-42ad-4d2d-8356-dcc17c879efa": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 4
+      }
+    },
+    "c709ece2-1163-4806-82dd-a718a7f96f63": {
+      "BLOCK": {
+        "safe": 11
+      }
+    },
+    "total": {
+      "BLOCK": {
+        "over_exploited": 26,
+        "semi_critical": 61,
+        "critical": 5,
+        "safe": 225
+      }
+    },
+    "1c91d362-6d41-47dc-93e9-e94656d30e9e": {
+      "BLOCK": {
+        "safe": 3
+      }
+    },
+    "9d9cb33c-ce22-4578-bce0-7b1c5dde5ea9": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 6
+      }
+    },
+    "6500b151-0513-4945-a4dc-779345ff667e": {
+      "BLOCK": {
+        "over_exploited": 3,
+        "semi_critical": 1
+      }
+    },
+    "0f913787-1edc-4710-a62e-83db36a21983": {
+      "BLOCK": {
+        "semi_critical": 3
+      }
+    },
+    "93e8e962-cb83-4126-9240-63b2eef9c5a1": {
+      "BLOCK": {
+        "semi_critical": 4,
+        "safe": 4
+      }
+    },
+    "0225b84a-4a82-4dcb-8aa4-32a8c65463af": {
+      "BLOCK": {
+        "semi_critical": 2,
+        "safe": 7
+      }
+    },
+    "3f809da8-bad3-430a-ab3c-820964b2ce70": {
+      "BLOCK": {
+        "semi_critical": 2,
+        "safe": 8
+      }
+    },
+    "3eb9cd90-0e22-4d11-ba8e-6b79a4d65c95": {
+      "BLOCK": {
+        "safe": 8
+      }
+    },
+    "6200386e-6421-4496-96f6-3b70745ef6fe": {
+      "BLOCK": {
+        "over_exploited": 2,
+        "semi_critical": 1,
+        "safe": 1
+      }
+    },
+    "ed74728c-06f3-467d-9464-39688212a09b": {
+      "BLOCK": {
+        "over_exploited": 2,
+        "semi_critical": 3
+      }
+    },
+    "4aa2e757-aa24-4645-a2a8-6f5b51309619": {
+      "BLOCK": {
+        "safe": 6
+      }
+    },
+    "58e94fc8-3e5c-40ea-8ea3-be5a6c0e4757": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 6
+      }
+    },
+    "dcf4df36-b127-4d24-846c-3055aac1d13c": {
+      "BLOCK": {
+        "semi_critical": 2,
+        "critical": 1,
+        "safe": 8
+      }
+    },
+    "ffc5de82-5e7a-498e-8f84-90faf5edccd9": {
+      "BLOCK": {
+        "critical": 1,
+        "safe": 4
+      }
+    },
+    "0c99b1fc-5e07-4f80-b41c-07cf367b4dc3": {
+      "BLOCK": {
+        "safe": 9
+      }
+    },
+    "973db8af-af2b-4921-b071-dd2c2bddaecf": {
+      "BLOCK": {
+        "semi_critical": 1,
+        "safe": 3
+      }
+    },
+    "8f500621-d619-42ce-b1bd-f2ec76a524b1": {
+      "BLOCK": {
+        "safe": 3
+      }
+    },
+    "8738a535-424f-4e5c-b3d5-ef55f88d55c8": {
+      "BLOCK": {
+        "safe": 5
+      }
+    }
+  },
+  "gwProjectedUtilAllocationDynamicAquifer": {
+    "domestic": {
+      "total": 0.0
+    },
+    "total": {
+      "total": 0.0
+    }
+  },
+  "additionalRecharge": {},
+  "staticGWResource": {
+    "poor_quality": 0.0,
+    "total": 0.0,
+    "non_command": 0.0,
+    "command": 0.0
+  },
+  "totalGWAvailability": {
+    "poor_quality": 0.0,
+    "total": 3398973.4000000004,
+    "non_command": 2705381.87,
+    "command": 693591.5299999999
+  },
+  "aquiferBusinessData": {
+    "SemiConfined Aquifer Piezo Data": null,
+    "confined_aquifer": {
+      "total": {
+        "total": 0.0
+      },
+      "in_storage_gw": {
+        "in_storage_gw": 0.0
+      },
+      "dynamic_gw": {
+        "dynamic_gw": 0.0
+      }
+    }
+  },
+  "coastalBusinessData": null,
+  "waterDepletedZonesBusinessData": null,
+  "inOutFlow": {
+    "poor_quality": 0.0,
+    "total": 0.0,
+    "non_command": 0.0,
+    "command": 0.0
+  },
+  "baseFlow": {
+    "poor_quality": {},
+    "total": {
+      "lateral_aquifer": 0.0,
+      "vertcal_aquifer": 0.0
+    },
+    "non_command": {},
+    "command": {}
+  },
+  "streamRecharge": null,
+  "additionalbaseflow": null,
+  "envFlows": null,
+  "subject": null,
+  "action": null,
+  "modifiable": null,
+  "isUrban": null,
+  "gwSpecificYield": null,
+  "geology": null,
+  "evaporation": {
+    "transpiration": {
+      "poor_quality": 0.0,
+      "total": 0.0,
+      "non_command": 0.0,
+      "command": 0.0
+    },
+    "evaporation": {
+      "poor_quality": 0.0,
+      "total": 0.0,
+      "non_command": 0.0,
+      "command": 0.0
+    },
+    "et": {
+      "poor_quality": 0.0,
+      "total": 0.0,
+      "non_command": 0.0,
+      "command": 0.0
+    }
+  },
+  "qualityTagging": null,
+  "approvalLevel": null,
+  "verificStatus": null,
+  "timeStamp": null,
+  "locationUUID": "f38e6de8-396e-47b4-af18-32c333eddccc",
+  "rainfall": {
+    "poor_quality": 0.0,
+    "total": 1101.7885372664878,
+    "non_command": 1105.2306892998072,
+    "command": 1073.878554898849
+  },
+  "wtfonly": null,
+  "computationSummary": null,
+  "draftData": {
+    "agriculture": {
+      "total": 1789776.7667199997,
+      "non_command": 1693974.1008000001,
+      "command": 95802.66592
+    },
+    "domestic": {
+      "total": 175518.91942889997,
+      "non_command": 156197.3706789,
+      "command": 19321.54875
+    },
+    "total": {
+      "total": 1985023.3800000001,
+      "non_command": 1869359.1900000006,
+      "command": 115664.19000000005
+    },
+    "industry": {
+      "total": 19727.484159,
+      "non_command": 19187.612009,
+      "command": 539.87215
+    }
+  },
+  "rechargeData": {
+    "agriculture": {
+      "poor_quality": 0.0,
+      "total": 655226.0199999998,
+      "non_command": 421883.3,
+      "command": 233342.72
+    },
+    "pipeline": {
+      "poor_quality": 0.0,
+      "total": 3857.1375,
+      "non_command": 3857.1375,
+      "command": 0.0
+    },
+    "rainfall": {
+      "poor_quality": 0.0,
+      "total": 2717451.4899999993,
+      "non_command": 2348792.4299999992,
+      "command": 368659.05999999994
+    },
+    "total": {
+      "poor_quality": 0.0,
+      "total": 3589948.4200000004,
+      "non_command": 2854361.5799999996,
+      "command": 735586.84
+    },
+    "surface_irrigation": {
+      "poor_quality": 0.0,
+      "total": 211927.65000000002,
+      "non_command": 0.0,
+      "command": 211927.6656649711
+    },
+    "gw_irrigation": {
+      "poor_quality": 0.0,
+      "total": 443298.35,
+      "non_command": 421883.3,
+      "command": 21415.089999999997
+    },
+    "water_body": {
+      "poor_quality": 0.0,
+      "total": 51435.90999999999,
+      "non_command": 23555.319999999996,
+      "command": 27880.589999999993
+    },
+    "canal": {
+      "poor_quality": 0.0,
+      "total": 101571.71,
+      "command": 101571.71
+    },
+    "sewage": {
+      "poor_quality": 0.0,
+      "total": 0.0,
+      "non_command": 0.0,
+      "command": 0.0
+    },
+    "artificial_structure": {
+      "poor_quality": 0.0,
+      "total": 60406.042000000016,
+      "non_command": 56273.278,
+      "command": 4132.769999999999
+    }
+  },
+  "currentAvailabilityForAllPurposes": {
+    "poor_quality": 0.0,
+    "total": 3398973.4000000004,
+    "non_command": 2705381.87,
+    "command": 693591.5299999999
+  },
+  "availabilityForFutureUse": {
+    "poor_quality": 0.0,
+    "total": 1502399.39,
+    "non_command": 925541.45,
+    "command": 576857.9700000002
+  },
+  "gwallocation": {
+    "domestic": {
+      "poor_quality": 0.0,
+      "total": 188056.15999999995,
+      "non_command": 167665.27,
+      "command": 20390.890000000003
+    },
+    "total": {
+      "poor_quality": 0.0,
+      "total": 188056.15999999995,
+      "non_command": 167665.27,
+      "command": 20390.890000000003
+    },
+    "industry": {
+      "poor_quality": 0.0,
+      "total": 0.0
+    }
+  },
+  "stageOfExtraction": {
+    "poor_quality": 0.0,
+    "total": 58.40067415649678,
+    "non_command": 69.09779394655293,
+    "command": 16.676124923267167
+  },
+  "gwlevelData": null,
+  "gwanalysisSeason": null,
+  "gwtrendSlope": null,
+  "waterTableRiseFall": null,
+  "gwtrendAttention": null,
+  "waterTableCategory": null,
+  "message": null
+}
