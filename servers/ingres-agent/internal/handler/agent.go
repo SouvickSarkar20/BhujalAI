@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/ingres/ingres-agent-go/internal/apierr"
 	"github.com/ingres/ingres-agent-go/internal/llm"
 	"github.com/ingres/ingres-agent-go/internal/types"
 	"github.com/ingres/ingres-agent-go/internal/validator"
@@ -13,14 +13,12 @@ import (
 func HandleAgentChat(c *fiber.Ctx) error {
 	var req types.AgentRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return apierr.New(400, "Invalid payload", err)
 	}
 
 	// Validation step
 	if err := validator.Validate.Struct(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": validator.FormatValidationError(err),
-		})
+		return apierr.New(400, validator.FormatValidationError(err), err)
 	}
 
 	// Convert agent message history to chat format for LLM
@@ -41,8 +39,7 @@ func HandleAgentChat(c *fiber.Ctx) error {
 	p := llm.GetProvider()
 	answer, state, err := p.HandleUserQuery(ctx, req.Question, chatHistory)
 	if err != nil {
-		slog.Error("error from llm", "error", err, "question", req.Question)
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": "agent processing failed", "details": err.Error()})
+		return apierr.New(502, "AI Agent processing failed", err)
 	}
 
 	return c.JSON(types.AgentResponse{

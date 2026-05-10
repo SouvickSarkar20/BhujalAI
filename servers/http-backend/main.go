@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -16,6 +17,7 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/ingres/http-backend-go/internal/apierr"
 	"github.com/ingres/http-backend-go/internal/cache"
 	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/db"
@@ -47,7 +49,33 @@ func main() {
 		os.Exit(1)
 	}
 
-	app := fiber.New(fiber.Config{AppName: "Ingres HTTP Backend"})
+	app := fiber.New(fiber.Config{
+		AppName: "Ingres HTTP Backend",
+		// Centralized Error Handler
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+			message := "Internal Server Error"
+
+			// Use errors.As to check if it's our custom AppError
+			var e *apierr.AppError
+			if errors.As(err, &e) {
+				code = e.Code
+				message = e.Message
+			} else {
+				// Fallback for standard Fiber errors
+				var fe *fiber.Error
+				if errors.As(err, &fe) {
+					code = fe.Code
+					message = fe.Message
+				}
+			}
+
+			slog.Error("request error", "code", code, "message", message, "details", err.Error())
+			return c.Status(code).JSON(fiber.Map{
+				"error": message,
+			})
+		},
+	})
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/ingres/http-backend-go/internal/apierr"
 	"github.com/ingres/http-backend-go/internal/cache"
 	"github.com/ingres/http-backend-go/internal/client"
 	"github.com/ingres/http-backend-go/internal/config"
@@ -16,14 +17,12 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 	return func(c *fiber.Ctx) error {
 		var req client.AnalyticsRequest
 		if err := c.BodyParser(&req); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+			return apierr.New(400, "Invalid payload", err)
 		}
 		
 		// Validation step
 		if err := validator.Validate.Struct(req); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": validator.FormatValidationError(err),
-			})
+			return apierr.New(400, validator.FormatValidationError(err), err)
 		}
 
 		// Check Cache First
@@ -39,22 +38,22 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 		// Call all python endpoints
 		stressRes, err := client.CallAnalyticsService("stress", req)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch stress analysis"})
+			return apierr.New(502, "Failed to fetch stress analysis", err)
 		}
 
 		consumptionRes, err := client.CallAnalyticsService("consumption", req)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch consumption analysis"})
+			return apierr.New(502, "Failed to fetch consumption analysis", err)
 		}
 
 		rechargeRes, err := client.CallAnalyticsService("recharge", req)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch recharge analysis"})
+			return apierr.New(502, "Failed to fetch recharge analysis", err)
 		}
 
 		disparityRes, err := client.CallAnalyticsService("disparity", req)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch disparity analysis"})
+			return apierr.New(502, "Failed to fetch disparity analysis", err)
 		}
 
 		finalRes := fiber.Map{
@@ -92,7 +91,7 @@ func GetLocations(cacheStore cache.Store) fiber.Handler {
 		// 2. Fetch from Python Service
 		res, err := client.FetchLocations()
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to fetch locations"})
+			return apierr.New(502, "Failed to fetch locations from upstream", err)
 		}
 
 		// 3. Save to Cache (longer TTL for locations since they rarely change)

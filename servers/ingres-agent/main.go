@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -14,6 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
 
+	"github.com/ingres/ingres-agent-go/internal/apierr"
 	"github.com/ingres/ingres-agent-go/internal/handler"
 )
 
@@ -37,7 +39,22 @@ func main() {
 		port = p
 	}
 
-	app := fiber.New(fiber.Config{AppName: "Ingres Agent Service"})
+	app := fiber.New(fiber.Config{
+		AppName: "Ingres Agent Service",
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+			message := "Internal Server Error"
+
+			var e *apierr.AppError
+			if errors.As(err, &e) {
+				code = e.Code
+				message = e.Message
+			}
+
+			slog.Error("agent error", "code", code, "message", message, "details", err.Error())
+			return c.Status(code).JSON(fiber.Map{"error": message})
+		},
+	})
 	app.Use(recover.New())
 	app.Use(logger.New())
 
