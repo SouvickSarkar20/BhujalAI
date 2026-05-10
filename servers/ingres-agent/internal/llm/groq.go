@@ -9,8 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"time"
-
+	"github.com/ingres/ingres-agent-go/internal/httpclient"
 	"github.com/ingres/ingres-agent-go/internal/prompts"
 	apitypes "github.com/ingres/ingres-agent-go/internal/types"
 	"github.com/ingres/ingres-agent-go/internal/utils"
@@ -76,8 +75,7 @@ func (p *GroqProvider) callWithTools(ctx context.Context, userQuery string, mess
 		httpReq.Header.Set("Content-Type", "application/json")
 		httpReq.Header.Set("Authorization", "Bearer "+p.apiKey)
 
-		client := http.Client{Timeout: 60 * time.Second}
-		resp, err := client.Do(httpReq)
+		resp, err := httpclient.Default.Do(httpReq)
 		if err != nil {
 			return "", false, err
 		}

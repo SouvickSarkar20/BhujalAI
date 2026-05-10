@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
+	"github.com/ingres/ingres-agent-go/internal/httpclient"
 	"github.com/ingres/ingres-agent-go/internal/prompts"
 	apitypes "github.com/ingres/ingres-agent-go/internal/types"
 	"github.com/ingres/ingres-agent-go/internal/utils"
@@ -97,14 +97,12 @@ func (p *GeminiProvider) callGeminiAPI(userQuery string, previousChats []apitype
 
 	queryMatchesPrevious := userMessagesTotal > 0 && lastUserMsg == strings.ToLower(strings.TrimSpace(userQuery))
 
-	client := http.Client{Timeout: 30 * time.Second}
-
 	for i := 0; i < 5; i++ {
 		body, _ := json.Marshal(req)
 		httpReq, _ := http.NewRequest("POST", url, bytes.NewReader(body))
 		httpReq.Header.Set("Content-Type", "application/json")
 
-		resp, err := client.Do(httpReq)
+		resp, err := httpclient.Default.Do(httpReq)
 		if err != nil {
 			return "", err
 		}

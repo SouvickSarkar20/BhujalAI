@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
-
+	"github.com/ingres/http-backend-go/internal/httpclient"
 )
 
 type AnalyticsRequest struct {
@@ -30,8 +29,7 @@ func CallAnalyticsService(path string, req AnalyticsRequest) (map[string]interfa
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 
-	client := http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Do(httpReq)
+	resp, err := httpclient.Default.Do(httpReq)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +48,7 @@ func CallAnalyticsService(path string, req AnalyticsRequest) (map[string]interfa
 
 func FetchLocations() (map[string]interface{}, error) {
 	url := "http://localhost:8000/analyze/locations"
-	resp, err := http.Get(url)
+	resp, err := httpclient.Default.Get(url)
 	if err != nil {
 		return nil, err
 	}

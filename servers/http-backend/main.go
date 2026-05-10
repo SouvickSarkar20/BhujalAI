@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -55,9 +59,29 @@ func main() {
 	router.SetupRoutes(app, dbConn, cfg)
 
 	port := strconv.Itoa(cfg.HTTPBackendPort)
-	slog.Info("http-backend starting", "port", port, "app", "BhujalAI")
-	if err := app.Listen(":" + port); err != nil {
-		slog.Error("failed to start server", "error", err)
-		os.Exit(1)
+	
+	// Prepare for graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		slog.Info("http-backend starting", "port", port, "app", "BhujalAI")
+		if err := app.Listen(":" + port); err != nil {
+			slog.Error("failed to start server", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	<-quit // Block until a signal is received
+	slog.Info("shutting down http-backend...")
+
+	// Create a deadline for the shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := app.ShutdownWithContext(ctx); err != nil {
+		slog.Error("forced shutdown", "error", err)
 	}
+
+	slog.Info("http-backend stopped")
 }

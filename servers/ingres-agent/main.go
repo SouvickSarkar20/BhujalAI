@@ -1,10 +1,13 @@
 package main
 
 import (
-	"log"
+	"context"
 	"log/slog"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -43,12 +46,30 @@ func main() {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 
-	log.Printf("ingres-agent service listening on %d", port)
-	slog.Info("ingres-agent starting", "port", port)
-	if err := app.Listen(":" + strconv.Itoa(port)); err != nil {
-		slog.Error("failed to start agent server", "error", err)
-		os.Exit(1)
+	// Prepare for graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		slog.Info("ingres-agent starting", "port", port)
+		if err := app.Listen(":" + strconv.Itoa(port)); err != nil {
+			slog.Error("failed to start agent server", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	<-quit // Block until a signal is received
+	slog.Info("shutting down ingres-agent...")
+
+	// Create a deadline for the shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := app.ShutdownWithContext(ctx); err != nil {
+		slog.Error("forced shutdown", "error", err)
 	}
+
+	slog.Info("ingres-agent stopped")
 }
 
 func getEnv(key string, fallback string) string {

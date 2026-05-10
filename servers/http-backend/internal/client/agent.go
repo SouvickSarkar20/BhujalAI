@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/ingres/http-backend-go/internal/config"
+	"github.com/ingres/http-backend-go/internal/httpclient"
 	"github.com/ingres/http-backend-go/internal/models"
 )
 
@@ -15,7 +15,6 @@ type AgentMessage struct {
 	Sender  models.Sender `json:"sender"`
 	Content string        `json:"content"`
 }
-
 
 type AgentRequest struct {
 	UserID   string         `json:"userId"`
@@ -42,8 +41,7 @@ func CallAgentService(cfg config.Config, req AgentRequest) (AgentResponse, error
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 
-	client := http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Do(httpReq)
+	resp, err := httpclient.Default.Do(httpReq)
 	if err != nil {
 		return AgentResponse{}, err
 	}
