@@ -13,12 +13,14 @@ import (
 func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config, cacheStore cache.Store) {
 	api := app.Group("/api")
 
-	// Auth routes
+	// Auth routes (Strict Rate Limit)
 	auth := api.Group("/auth")
+	auth.Use(middleware.NewAuthLimiter(cfg))
 	auth.Post("/signup", handler.Signup(dbConn, cfg))
 	auth.Post("/signin", handler.Signin(dbConn, cfg))
 
-	// Chat routes
+	// Chat routes (General API Rate Limit)
+	api.Use(middleware.NewApiLimiter(cfg))
 	chat := api.Group("/chat")
 	chat.Use(middleware.RequireAuth(cfg))
 	chat.Get("/all", handler.GetAllChats(dbConn))

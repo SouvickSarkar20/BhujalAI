@@ -11,6 +11,7 @@ import (
 	"github.com/ingres/http-backend-go/internal/client"
 	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/validator"
+	"golang.org/x/sync/errgroup"
 )
 
 func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Handler {
@@ -35,25 +36,42 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 			}
 		}
 
-		// Call all python endpoints
-		stressRes, err := client.CallAnalyticsService("stress", req)
-		if err != nil {
-			return apierr.New(502, "Failed to fetch stress analysis", err)
-		}
+		// Call all python endpoints CONCURRENTLY using errgroup
+		g, _ := errgroup.WithContext(c.Context())
 
-		consumptionRes, err := client.CallAnalyticsService("consumption", req)
-		if err != nil {
-			return apierr.New(502, "Failed to fetch consumption analysis", err)
-		}
+		var stressRes, consumptionRes, rechargeRes, disparityRes map[string]interface{}
 
-		rechargeRes, err := client.CallAnalyticsService("recharge", req)
-		if err != nil {
-			return apierr.New(502, "Failed to fetch recharge analysis", err)
-		}
+		// 1. Stress
+		g.Go(func() error {
+			var err error
+			stressRes, err = client.CallAnalyticsService("stress", req)
+			return err
+		})
 
-		disparityRes, err := client.CallAnalyticsService("disparity", req)
-		if err != nil {
-			return apierr.New(502, "Failed to fetch disparity analysis", err)
+		// 2. Consumption
+		g.Go(func() error {
+			var err error
+			consumptionRes, err = client.CallAnalyticsService("consumption", req)
+			return err
+		})
+
+		// 3. Recharge
+		g.Go(func() error {
+			var err error
+			rechargeRes, err = client.CallAnalyticsService("recharge", req)
+			return err
+		})
+
+		// 4. Disparity
+		g.Go(func() error {
+			var err error
+			disparityRes, err = client.CallAnalyticsService("disparity", req)
+			return err
+		})
+
+		// Wait for all to finish (or any one to fail)
+		if err := g.Wait(); err != nil {
+			return apierr.New(502, "Failed to fetch full analytics from upstream", err)
 		}
 
 		finalRes := fiber.Map{
