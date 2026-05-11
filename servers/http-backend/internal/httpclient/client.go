@@ -9,7 +9,7 @@ import (
 // Default is a shared, optimized HTTP client with connection pooling enabled.
 // Creating a new http.Client for every request is a common Go performance anti-pattern.
 var Default = &http.Client{
-	Timeout: 30 * time.Second,
+	Timeout: 180 * time.Second,
 	Transport: &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{

@@ -28,6 +28,8 @@ func GetProvider() Provider {
 	switch providerType {
 	case "groq":
 		currentProvider = NewGroqProvider()
+	case "openrouter":
+		currentProvider = NewOpenRouterProvider()
 	default:
 		currentProvider = NewGeminiProvider()
 	}
