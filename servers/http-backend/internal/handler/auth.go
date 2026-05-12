@@ -39,7 +39,24 @@ func Signup(db *gorm.DB, cfg config.Config) fiber.Handler {
 			return apierr.New(400, "Email already in use", err)
 		}
  
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": user.ID, "email": user.Email, "name": user.Name})
+		expiry := time.Now().Add(cfg.JWTExpiry)
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"user_id": user.ID,
+			"exp":     expiry.Unix(),
+		})
+		tokenString, err := token.SignedString([]byte(cfg.JWTSecret))
+		if err != nil {
+			return apierr.New(500, "Token creation failed", err)
+		}
+
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"token": tokenString,
+			"user": fiber.Map{
+				"id":    user.ID,
+				"email": user.Email,
+				"name":  user.Name,
+			},
+		})
 	}
 }
  

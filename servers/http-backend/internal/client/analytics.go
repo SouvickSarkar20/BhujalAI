@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/ingres/http-backend-go/internal/config"
 	"github.com/ingres/http-backend-go/internal/httpclient"
 )
 
@@ -15,14 +17,13 @@ type AnalyticsRequest struct {
 	LocUUID  string `json:"locuuid,omitempty"`
 }
 
-func CallAnalyticsService(path string, req AnalyticsRequest) (map[string]interface{}, error) {
+func CallAnalyticsService(cfg config.Config, path string, req AnalyticsRequest) (map[string]interface{}, error) {
 	payload, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Assuming Python service runs on localhost:8000
-	url := fmt.Sprintf("http://localhost:8000/analyze/%s", path)
+	url := fmt.Sprintf("%s/analyze/%s", cfg.AnalyticsServiceURL, path)
 	httpReq, err := http.NewRequest("POST", url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
@@ -46,8 +47,8 @@ func CallAnalyticsService(path string, req AnalyticsRequest) (map[string]interfa
 	return ar, nil
 }
 
-func FetchLocations() (map[string]interface{}, error) {
-	url := "http://localhost:8000/analyze/locations"
+func FetchLocations(cfg config.Config) (map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/analyze/locations", cfg.AnalyticsServiceURL)
 	resp, err := httpclient.Default.Get(url)
 	if err != nil {
 		return nil, err

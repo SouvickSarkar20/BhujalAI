@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 
@@ -102,6 +104,9 @@ func ChatWithAgent(db *gorm.DB, cfg config.Config) fiber.Handler {
 		if err := db.Create(&botMsg).Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to save bot message"})
 		}
+
+		// Update chat's UpdatedAt timestamp
+		db.Model(&chat).Update("updated_at", time.Now())
 
 		return c.JSON(fiber.Map{
 			"chatId":   chat.ID,

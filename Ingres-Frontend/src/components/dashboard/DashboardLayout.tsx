@@ -25,10 +25,12 @@ import {
   Menu,
   X,
   LogOut,
-  User
+  User,
+  Home
 } from 'lucide-react';
 
 const sidebarItems = [
+  { icon: Home, label: 'Home', path: '/' },
   { icon: MessageSquare, label: 'Chat', path: '/dashboard/chat' },
 ];
 

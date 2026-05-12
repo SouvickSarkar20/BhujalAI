@@ -35,7 +35,7 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config, cacheStore 
 
 	// Analytics routes
 	analytics := api.Group("/analytics")
-	analytics.Get("/locations", handler.GetLocations(cacheStore))
+	analytics.Get("/locations", handler.GetLocations(cfg, cacheStore))
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
@@ -49,5 +49,5 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config, cacheStore 
 	// Protected routes
 	protected := analytics.Group("/")
 	protected.Use(middleware.RequireAuth(cfg))
-	protected.Post("/query", handler.GetAnalyticsForLocation(cfg, cacheStore))
+	protected.Post("/analyze", handler.GetAnalyticsForLocation(cfg, cacheStore))
 }

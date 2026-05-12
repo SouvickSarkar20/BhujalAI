@@ -44,28 +44,28 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 		// 1. Stress
 		g.Go(func() error {
 			var err error
-			stressRes, err = client.CallAnalyticsService("stress", req)
+			stressRes, err = client.CallAnalyticsService(cfg, "stress", req)
 			return err
 		})
 
 		// 2. Consumption
 		g.Go(func() error {
 			var err error
-			consumptionRes, err = client.CallAnalyticsService("consumption", req)
+			consumptionRes, err = client.CallAnalyticsService(cfg, "consumption", req)
 			return err
 		})
 
 		// 3. Recharge
 		g.Go(func() error {
 			var err error
-			rechargeRes, err = client.CallAnalyticsService("recharge", req)
+			rechargeRes, err = client.CallAnalyticsService(cfg, "recharge", req)
 			return err
 		})
 
 		// 4. Disparity
 		g.Go(func() error {
 			var err error
-			disparityRes, err = client.CallAnalyticsService("disparity", req)
+			disparityRes, err = client.CallAnalyticsService(cfg, "disparity", req)
 			return err
 		})
 
@@ -94,7 +94,7 @@ func GetAnalyticsForLocation(cfg config.Config, cacheStore cache.Store) fiber.Ha
 	}
 }
 
-func GetLocations(cacheStore cache.Store) fiber.Handler {
+func GetLocations(cfg config.Config, cacheStore cache.Store) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		cacheKey := "locations:all"
 		
@@ -107,7 +107,7 @@ func GetLocations(cacheStore cache.Store) fiber.Handler {
 		}
 
 		// 2. Fetch from Python Service
-		res, err := client.FetchLocations()
+		res, err := client.FetchLocations(cfg)
 		if err != nil {
 			return apierr.New(502, "Failed to fetch locations from upstream", err)
 		}

@@ -39,7 +39,7 @@ export default function ChatPage() {
   const navigate = useNavigate();
   const { chatId } = useParams<{ chatId?: string }>();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("auth_token");
 
   // Auto scroll
   useEffect(() => {

@@ -21,8 +21,9 @@ type Config struct {
 	OpenAIKey      string
 	IngresAPIURL   string
 	IngresAPIKey   string
-	AllowedOrigins string
-	RedisURL       string
+	AllowedOrigins       string
+	RedisURL             string
+	AnalyticsServiceURL  string
 }
 
 func getEnv(key string, fallback string) string {
@@ -63,7 +64,8 @@ func LoadConfig() Config {
 		OpenAIKey:      getEnv("OPENAI_API_KEY", ""),
 		IngresAPIURL:   getEnv("INGRES_API_URL", "https://ingres.iith.ac.in/api/gec/getBusinessDataForUserOpen"),
 		IngresAPIKey:   getEnv("INGRES_API_KEY", ""),
-		AllowedOrigins: getEnv("ALLOWED_ORIGINS", "http://localhost:5173, https://ingres-agent.space, http://ingres-agent.space, https://www.ingres-agent.space, http://localhost:3000"),
-		RedisURL:       getEnv("REDIS_URL", ""),
+		AllowedOrigins:      getEnv("ALLOWED_ORIGINS", "http://localhost:5173, https://ingres-agent.space, http://ingres-agent.space, https://www.ingres-agent.space, http://localhost:3000"),
+		RedisURL:            getEnv("REDIS_URL", ""),
+		AnalyticsServiceURL: getEnv("ANALYTICS_SERVICE_URL", "http://localhost:8000"),
 	}
 }

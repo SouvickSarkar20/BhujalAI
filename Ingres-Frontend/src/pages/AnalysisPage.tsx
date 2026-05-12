@@ -42,7 +42,7 @@ export default function AnalysisPage() {
   const [isRegionsLoading, setIsRegionsLoading] = useState(true);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const { toast } = useToast();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('auth_token');
 
   useEffect(() => {
     const fetchRegions = async () => {

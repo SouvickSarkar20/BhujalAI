@@ -11,9 +11,12 @@ import (
 
 // NewAuthLimiter prevents brute-force attacks on signup/login.
 func NewAuthLimiter(cfg config.Config) fiber.Handler {
-	store := redis.New(redis.Config{
-		URL: cfg.RedisURL,
-	})
+	var store fiber.Storage
+	if cfg.RedisURL != "" {
+		store = redis.New(redis.Config{
+			URL: cfg.RedisURL,
+		})
+	}
 
 	return limiter.New(limiter.Config{
 		Max:        5,               // 5 requests
@@ -32,9 +35,12 @@ func NewAuthLimiter(cfg config.Config) fiber.Handler {
 
 // NewApiLimiter prevents abuse of AI and Analytics endpoints.
 func NewApiLimiter(cfg config.Config) fiber.Handler {
-	store := redis.New(redis.Config{
-		URL: cfg.RedisURL,
-	})
+	var store fiber.Storage
+	if cfg.RedisURL != "" {
+		store = redis.New(redis.Config{
+			URL: cfg.RedisURL,
+		})
+	}
 
 	return limiter.New(limiter.Config{
 		Max:        20,              // 20 requests
