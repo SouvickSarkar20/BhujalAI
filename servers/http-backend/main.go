@@ -112,7 +112,7 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		slog.Info("http-backend starting", "port", port, "app", "BhujalAI")
+		slog.Info("http-backend starting", "port", port, "app", "IngresAI")
 		if err := app.Listen(":" + port); err != nil {
 			slog.Error("failed to start server", "error", err)
 			os.Exit(1)

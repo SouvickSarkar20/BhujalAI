@@ -42,7 +42,7 @@ func SetupRoutes(app *fiber.App, dbConn *gorm.DB, cfg config.Config, cacheStore 
 		return c.Status(200).JSON(fiber.Map{
 			"status":  "ok",
 			"service": "http-backend",
-			"app":     "BhujalAI",
+			"app":     "IngresAI",
 		})
 	})
 

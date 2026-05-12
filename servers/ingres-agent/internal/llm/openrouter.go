@@ -73,8 +73,8 @@ func (p *OpenRouterProvider) callWithTools(ctx context.Context, userQuery string
 		httpReq, _ := http.NewRequest("POST", fullURL, bytes.NewReader(body))
 		httpReq.Header.Set("Content-Type", "application/json")
 		httpReq.Header.Set("Authorization", "Bearer "+p.apiKey)
-		httpReq.Header.Set("HTTP-Referer", "https://bhujal-ai.com") // Required by OpenRouter
-		httpReq.Header.Set("X-Title", "Bhujal AI Agent")
+		httpReq.Header.Set("HTTP-Referer", "https://ingres-ai.com") // Required by OpenRouter
+		httpReq.Header.Set("X-Title", "Ingres AI Agent")
 
 		resp, err := httpclient.Default.Do(httpReq)
 		if err != nil {

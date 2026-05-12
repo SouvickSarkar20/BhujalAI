@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       toast({
         title: "Account created!",
-        description: "Welcome to BHUJAL AI. Let's get started!",
+        description: "Welcome to INGRES AI. Let's get started!",
       });
     } catch (error: any) {
       toast({

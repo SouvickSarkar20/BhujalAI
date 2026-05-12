@@ -62,7 +62,7 @@ const LoginPage = () => {
       <div className="relative z-10 w-full max-w-md px-6">
         {/* Header */}
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-white mb-4">BHUJAL AI 🙏🏼</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">INGRES AI 🙏🏼</h2>
           <p className="text-lg text-white/80 leading-relaxed">
             Revolutionizing groundwater intelligence in India.
             Sign in to explore and analyze critical data.
