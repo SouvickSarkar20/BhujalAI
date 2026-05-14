@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy to Production (Docker)
 
 on:
   push:
@@ -11,76 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Build Frontend
-        working-directory: ./ingres-frontend
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-        run: |
-          npm ci
-          npm run build
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.23'
-
-      - name: Verify Go Backend builds
-        working-directory: ./servers/http-backend
-        run: go build ./...
-
-      - name: Verify Go Agent builds
-        working-directory: ./servers/ingres-agent
-        run: go build ./...
-
-      - name: Deploy backend to Droplet
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
-            cd /opt/ingres
+            cd Ingres-go
             git pull origin main
-
-            # Sync Python dependencies
-            cd servers/analytics
-            source venv/bin/activate
-            pip install -r requirements.txt --quiet
-            deactivate
-            cd /opt/ingres
-
-            # Rebuild Go services on the server
-            cd servers/http-backend && go build -o ingres-backend ./... && cd /opt/ingres
-            cd servers/ingres-agent && go build -o ingres-agent ./... && cd /opt/ingres
-
-            # Restart all services
-            systemctl restart ingres-backend ingres-agent ingres-analytics
-            echo "✅ Backend services restarted"
-
-      - name: Upload frontend build to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          source: "ingres-frontend/dist/*"
-          target: "/opt/ingres/ingres-frontend/dist"
-          strip_components: 2
-
-      - name: Reload Nginx
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
-          script: |
-            nginx -t && systemctl reload nginx
-            echo "✅ Nginx reloaded — deployment complete!"
+            
+            # Stop host Nginx if it's still running (since we use Docker Nginx now)
+            sudo systemctl stop nginx || true
+            
+            # Rebuild and restart the Docker stack
+            docker compose up --build -d
+            
+            echo "✅ Deployment complete — Docker stack is live!"
