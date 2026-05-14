@@ -1,44 +1,228 @@
-Ingres AI
+# IngresAI — Groundwater Intelligence Platform
 
-Introduction
+> **A production-grade, AI-powered platform for analysing groundwater data across India. Built on a microservices architecture with Go, Python, and React — deployed with Docker and secured with Let's Encrypt SSL.**
 
-This project is a high performance platform designed to help users interact with groundwater data across India. It serves as a bridge between complex geological datasets and everyday users who need quick insights. By using advanced artificial intelligence, the system can interpret technical information and provide clear answers to questions about rainfall, water levels, and geographical trends. The goal is to make environmental data accessible to everyone, from researchers to local officials, through a simple and intuitive chat interface.
+🌐 **Live at:** [https://ingres-agent.space](https://ingres-agent.space)
 
-Technical Overview
+---
 
-The platform is built using a microservices architecture with a Go backend and a React frontend. It consists of two primary services: the HTTP Backend which manages users and sessions, and the Agent Service which handles intelligence and tool calling.
+## Overview
 
-Setup Instructions
+IngresAI is an intelligent data platform that acts as a bridge between India's complex groundwater datasets and the people who need insights from them — researchers, policymakers, and local officials. Users interact through a natural language chat interface powered by a multi-provider LLM agent, while a dedicated Python analytics engine computes stress scores, recharge efficiency, sectoral consumption, and command area disparity for any location in India.
 
-1. Move to the project root and install frontend dependencies by running npm install inside the Ingres-Frontend directory.
+---
 
-2. Configure the environment variables in the .env file within both servers/http-backend and servers/ingres-agent. Ensure you provide your database connection string and API keys.
+## Architecture
 
-3. Start the agent service by moving to servers/ingres-agent and running go run main.go or using air for live reload.
+The system is composed of four independent microservices, orchestrated via Docker Compose and unified behind an Nginx reverse proxy.
 
-4. Start the backend service by moving to servers/http-backend and running go run main.go or using air.
+```
+User (Browser)
+      │
+      ▼
+  Nginx (Port 80/443)
+  ├── / ──────────────────► React Frontend (Static Files)
+  ├── /api/ ──────────────► HTTP Backend (Go / Fiber) :9001
+  ├── /agent/ ────────────► Ingres Agent  (Go / Fiber) :9000
+  └── /analytics/ ────────► Analytics     (Python / FastAPI) :8000
+```
 
-5. Start the frontend by moving to Ingres-Frontend and running npm run dev.
+| Service | Language / Framework | Responsibility |
+|---|---|---|
+| **HTTP Backend** | Go (Fiber) | Auth (JWT), user management, DB, analytics proxy |
+| **Ingres Agent** | Go (Fiber) | LLM orchestration, function-calling, caching |
+| **Analytics Server** | Python (FastAPI) | Groundwater stress, consumption & recharge analysis |
+| **Frontend** | React + Vite + Nginx | Single-page application, served statically |
 
-Switching LLM Providers
+---
 
-The system is designed with a pluggable provider interface. To switch between Groq and Gemini, you only need to change one line in your environment configuration. In the .env file of the agent service, set the LLM_PROVIDER variable to either groq or gemini. The factory logic inside the Go service will automatically instantiate the correct provider and handle all internal differences in API formats.
+## Tech Stack
 
-Concurrency and Performance
+### Backend (Go)
+- **Fiber v2** — High-performance HTTP framework
+- **GORM** — ORM with PostgreSQL (NeonDB serverless)
+- **JWT** — Stateless authentication
+- **Redis (Upstash)** — Two-layer caching (L1: in-memory, L2: Redis)
+- **Connection Pooling** — Shared HTTP client with persistent connections
+- **Rate Limiting** — Per-route middleware (auth routes vs. general API)
 
-The backend utilizes Go's native goroutines to handle multiple user requests simultaneously without blocking. This ensures that the agent can perform complex information retrieval and processing in the background while the main application remains responsive. Channel based communication is used to coordinate between the tool calling loop and the final response generation, ensuring thread safe state management.
+### AI Agent (Go)
+- **Pluggable LLM Provider** — Switch between Gemini, Groq, and OpenRouter via a single env variable
+- **Function-Calling Loop** — Agentic orchestration with tool calls (groundwater data fetching)
+- **Hybrid Cache** — L1 in-memory + L2 Redis to prevent token exhaustion on repeated queries
 
-Data Caching with Redis
-To optimize performance and reduce latency for frequent queries, the system integrates a Redis caching layer. This stores pre-processed geological data and common query results in memory. By fetching data from the cache instead of the primary database whenever possible, the platform achieves significantly faster response times and reduces the load on the underlying infrastructure.
+### Analytics (Python)
+- **FastAPI** — High-performance async API
+- **Pandas** — Data manipulation for stress, consumption, recharge, and disparity calculations
+- **Pydantic** — Strict request validation
 
-Performance Benchmarks
+### Infrastructure
+- **Docker + Docker Compose** — Full containerization of all 4 services
+- **Nginx** — Reverse proxy, static file server, HTTPS termination
+- **Let's Encrypt (Certbot)** — Automated, free SSL certificates with auto-renewal
+- **GitHub Actions** — CI/CD pipeline for zero-downtime deployments
+- **DigitalOcean** — Production droplet (Ubuntu, 2vCPU, 4GB RAM)
+- **NeonDB** — Serverless PostgreSQL
+- **Upstash Redis** — Serverless Redis (rediss:// TLS connection)
 
-The transition from a Node.js based architecture to Go has resulted in significant performance improvements across all service metrics. Below is a comparison of average response times and resource utilization under similar load conditions.
+---
 
-Metric | Node.js Backend | Go Backend (Fiber)
---- | --- | ---
-Average API Latency | 150ms | 30ms
-Agent Logic Processing | 450ms | 120ms
-Memory Usage (Idle) | 85MB | 12MB
-Throughput (Requests/sec) | 800 | 4500
-Concurrency Handling | Event Loop | Goroutines
+## Performance
+
+| Metric | Node.js (old) | Go/Fiber (current) |
+|---|---|---|
+| Average API Latency | 150ms | 30ms |
+| Agent Logic Processing | 450ms | 120ms |
+| Memory Usage (idle) | 85MB | 12MB |
+| Throughput | 800 req/s | 4,500 req/s |
+| Concurrency Model | Event Loop | Goroutines |
+
+---
+
+## Features
+
+- 💬 **Natural Language Chat** — Ask questions about any Indian state or district in plain English
+- 🤖 **Multi-Provider LLM** — Gemini, Groq, or OpenRouter — configurable at runtime
+- 📊 **Analytics Dashboard** — Groundwater stress index, sectoral consumption pie charts, recharge efficiency, and command area disparity
+- 🔒 **JWT Auth** — Secure login and session management
+- ⚡ **Redis Caching** — Prevents duplicate LLM calls; serves cached insights within milliseconds
+- 🌍 **Production-Grade SSL** — Automatic HTTPS via Let's Encrypt with auto-renewal
+- 🔄 **CI/CD** — GitHub Actions triggers a Docker rebuild on every push to `main`
+
+---
+
+## Repository Structure
+
+```
+Ingres-go/
+├── Ingres-Frontend/          # React + Vite + TailwindCSS frontend
+│   ├── Dockerfile            # Multi-stage: Node build → Nginx serve
+│   └── nginx.conf            # Reverse proxy + SSL configuration
+├── servers/
+│   ├── http-backend/         # Go HTTP backend
+│   │   └── internal/
+│   │       ├── handler/      # Request handlers
+│   │       ├── middleware/   # Auth, rate limiting
+│   │       ├── cache/        # Hybrid L1/L2 cache
+│   │       ├── client/       # Analytics & agent HTTP clients
+│   │       └── config/       # Environment configuration
+│   ├── ingres-agent/         # Go AI agent
+│   │   └── internal/
+│   │       ├── llm/          # Pluggable provider (Gemini/Groq/OpenRouter)
+│   │       ├── handler/      # Chat handler with agentic loop
+│   │       ├── cache/        # Hybrid cache for LLM responses
+│   │       └── prompts/      # System prompts
+│   └── analytics/            # Python analytics server
+│       ├── processors/core/  # Stress, consumption, recharge, disparity
+│       ├── routers/          # FastAPI routes
+│       ├── services/         # External INGRES API client
+│       └── models/           # Pydantic payloads
+├── docker-compose.yml        # Full stack orchestration
+└── .github/workflows/
+    └── deploy.yml            # CI/CD pipeline
+```
+
+---
+
+## Environment Variables
+
+### `servers/http-backend/.env`
+```env
+DATABASE_URL=postgresql://...
+JWT_SECRET=your_jwt_secret
+REDIS_URL=rediss://...
+AGENT_SERVICE_URL=http://agent:9000       # Set automatically by Docker
+ANALYTICS_SERVICE_URL=http://analytics:8000  # Set automatically by Docker
+```
+
+### `servers/ingres-agent/.env`
+```env
+LLM_PROVIDER=openrouter        # Options: gemini | groq | openrouter
+OPENAI_API_KEY=...             # Used for OpenRouter
+GEMINI_API_KEY=...
+GROQ_API_KEY=...
+REDIS_URL=rediss://...
+```
+
+> **Note:** `.env` files are never committed to Git. They must be created manually on the server.
+
+---
+
+## Local Development
+
+> **Prerequisites:** Go 1.26+, Node 20+, Python 3.11+, Docker (optional)
+
+### Without Docker
+```bash
+# 1. Start the Agent
+cd servers/ingres-agent && go run main.go
+
+# 2. Start the Backend
+cd servers/http-backend && go run main.go
+
+# 3. Start Analytics
+cd servers/analytics && uvicorn main:app --reload
+
+# 4. Start the Frontend
+cd Ingres-Frontend && npm install && npm run dev
+```
+
+### With Docker (Recommended)
+```bash
+# Build and start all services
+docker compose up --build -d
+
+# View logs
+docker logs -f http-backend
+docker compose logs -f
+```
+
+---
+
+## Production Deployment
+
+### First-time SSL setup
+```bash
+# 1. Get the SSL certificate (run once on the server)
+docker run --rm -it \
+  -v "$(pwd)/certbot/conf:/etc/letsencrypt" \
+  -v "$(pwd)/certbot/www:/var/www/certbot" \
+  certbot/certbot certonly --webroot --webroot-path=/var/www/certbot \
+  --email your@email.com --agree-tos --no-eff-email \
+  -d ingres-agent.space
+
+# 2. Restart the Docker stack
+docker compose up --build -d
+```
+
+### Automated CI/CD
+Every `git push` to `main` triggers the GitHub Actions pipeline which:
+1. SSHes into the DigitalOcean droplet.
+2. Pulls the latest code.
+3. Runs `docker compose up --build -d` to rebuild and redeploy.
+
+**Required GitHub Secrets:**
+| Secret | Value |
+|---|---|
+| `DROPLET_HOST` | Server IP address |
+| `DROPLET_USER` | `root` |
+| `DROPLET_SSH_KEY` | Private SSH key (`~/.ssh/id_ed25519`) |
+
+---
+
+## LLM Provider Switching
+
+The agent uses a **Strategy Pattern** for provider abstraction. To switch providers, change a single environment variable:
+
+```env
+# In servers/ingres-agent/.env
+LLM_PROVIDER=openrouter   # or: gemini | groq
+```
+
+No code changes required. The factory resolves the correct implementation at runtime.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
