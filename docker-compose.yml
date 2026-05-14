@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./servers/http-backend
+    container_name: http-backend
+    ports:
+      - "9001:9001"
+    restart: always
+    env_file:
+      - ./servers/http-backend/.env
+    environment:
+      - AGENT_SERVICE_URL=http://agent:9000
+      - ANALYTICS_SERVICE_URL=http://analytics:8000
+    depends_on:
+      - agent
+      - analytics
+
+  agent:
+    build: ./servers/ingres-agent
+    container_name: ingres-agent
+    ports:
+      - "9000:9000"
+    restart: always
+    env_file:
+      - ./servers/ingres-agent/.env
+
+  analytics:
+    build: ./servers/analytics
+    container_name: ingres-analytics
+    ports:
+      - "8000:8000"
+    restart: always
+
+  frontend:
+    build: ./Ingres-Frontend
+    container_name: ingres-frontend
+    ports:
+      - "4173:4173"
+    restart: always
+    environment:
+      - VITE_API_URL=http://64.227.146.166:9001/api
