@@ -17,7 +17,10 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
+          port: 22
+          debug: true
           script: |
+
             cd Ingres-go
             git pull origin main
             
