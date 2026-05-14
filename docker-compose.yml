@@ -36,7 +36,9 @@ services:
     build: ./Ingres-Frontend
     container_name: ingres-frontend
     ports:
-      - "4173:4173"
+      - "80:80"
     restart: always
     environment:
-      - VITE_API_URL=http://64.227.146.166:9001/api
+      - VITE_API_URL=/api
+    depends_on:
+      - backend
